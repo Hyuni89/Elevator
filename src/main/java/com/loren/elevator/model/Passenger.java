@@ -21,8 +21,6 @@ public class Passenger {
             sourceFloor = r.nextInt(limit);
         } while(targetFloor == sourceFloor);
 
-        ++targetFloor;
-        ++sourceFloor;
         floor = sourceFloor;
 
         this.id = PASSENGER_ID++;

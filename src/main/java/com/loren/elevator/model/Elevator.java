@@ -45,41 +45,43 @@ public class Elevator {
     }
 
     public boolean up() {
-        if(door != status.STOP && door != status.CLOSE && door != status.UPWARD) return false;
-        if(floor + 1 > maxFloor) return true;
+        if(door == status.OPEN || door == status.DOWNWARD) return false;
+        if(floor + 1 >= maxFloor) return true;
         passengers.forEach(Passenger::up);
         floor++;
+        door = status.UPWARD;
         return true;
     }
 
     public boolean down() {
-        if(door != status.STOP && door != status.CLOSE && door != status.DOWNWARD) return false;
-        if(floor - 1 == 0) return true;
+        if(door == status.OPEN || door == status.UPWARD) return false;
+        if(floor == 0) return true;
         passengers.forEach(Passenger::down);
         floor--;
+        door = status.DOWNWARD;
         return true;
     }
 
     public boolean open() {
-        if(door != status.STOP && door != status.CLOSE && door != status.OPEN) return false;
+        if(door == status.UPWARD || door == status.DOWNWARD) return false;
         door = status.OPEN;
         return true;
     }
 
     public boolean close() {
-        if(door != status.STOP && door != status.CLOSE && door != status.OPEN) return false;
+        if(door == status.UPWARD || door == status.DOWNWARD) return false;
         door = status.CLOSE;
         return true;
     }
 
     public boolean stop() {
-        if(door != status.UPWARD && door != status.DOWNWARD) return false;
+        if(door == status.OPEN || door == status.CLOSE) return true;
         door = status.STOP;
         return true;
     }
 
     public int getFloor() {
-        return floor - 1;
+        return floor;
     }
 
     public Passenger hasPassenger(int id) {

@@ -94,8 +94,8 @@ public class Building {
         Random r = new Random();
         int cnt = r.nextInt(5) + 1;
         for(int i = 0; i < cnt; i++) {
-            int h = r.nextInt(height);
-            passengers[h].add(new Passenger(height));
+            Passenger p = new Passenger(height);
+            passengers[p.getFloor()].add(p);
         }
     }
 

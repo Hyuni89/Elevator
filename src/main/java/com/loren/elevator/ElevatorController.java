@@ -88,7 +88,8 @@ public class ElevatorController {
         try {
             List<Command> req = request.getCommands();
             for(Command c : req) {
-                building.doCommand(c);
+                boolean res = building.doCommand(c);
+                if(!res) throw new Exception();
             }
         } catch(Exception e) {
             ret.setStatus(STATUS_NOTOK);
