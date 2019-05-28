@@ -61,8 +61,10 @@ public class Building {
             return false;
         }
 
+        if(!elevators.get(index).enter(pass)) {
+            return false;
+        }
         for(Passenger p : pass) {
-            elevators.get(index).enter(p);
             passengers[floor].remove(p);
         }
 
@@ -72,7 +74,6 @@ public class Building {
     public boolean exit(int index, List<Integer> ids) {
         int floor = elevators.get(index).getFloor();
         List<Passenger> pass = new ArrayList<>();
-        boolean ret = true;
 
         for(Integer id : ids) {
             Passenger p = elevators.get(index).hasPassenger(id);
@@ -82,10 +83,10 @@ public class Building {
             pass.add(p);
         }
 
-        for(Passenger p : pass) {
-            elevators.get(index).exit(p);
-            passengers[floor].add(p);
+        if(!elevators.get(index).exit(pass)) {
+            return false;
         }
+        passengers[floor].addAll(pass);
 
         return true;
     }

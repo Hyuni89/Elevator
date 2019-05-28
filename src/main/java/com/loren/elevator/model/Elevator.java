@@ -18,28 +18,36 @@ public class Elevator {
     }
 
     public Elevator(int maxFloor, int maxPeople) {
-        floor = 1;
+        floor = 0;
         door = status.CLOSE;
         passengers = new ArrayList<>();
         this.maxPeople = maxPeople;
         this.maxFloor = maxFloor;
     }
 
-    public boolean enter(Passenger passenger) {
-        if(passenger.getFloor() != floor) return false;
+    public boolean enter(List<Passenger> passenger) {
         if(door != status.OPEN) return false;
-        if(passengers.size() >= maxPeople) return false;
+        if(passengers.size() + passenger.size() > maxPeople) return false;
 
-        passengers.add(passenger);
+        for(Passenger p : passenger) {
+            if(p.getFloor() != floor) return false;
+        }
+
+        passengers.addAll(passenger);
 
         return true;
     }
 
-    public boolean exit(Passenger passenger) {
-        if(passenger.getFloor() != floor) return false;
+    public boolean exit(List<Passenger> passenger) {
         if(door != status.OPEN) return false;
 
-        passengers.remove(passenger);
+        for(Passenger p : passenger) {
+            if(p.getFloor() != floor) return false;
+        }
+
+        for(Passenger p : passenger) {
+            passengers.remove(p);
+        }
 
         return true;
     }
