@@ -17,14 +17,12 @@ public class Building {
     private int total;
     private int hitCount;
     private int timestamp;
-    private boolean isEnd;
 
     public Building(int height, int cntElevator, int maxPeople, int total) {
         this.height = height;
         this.total = total;
         timestamp = 0;
         hitCount = 0;
-        isEnd = false;
         passengers = new ArrayList[height];
         for(int i = 0; i < height; i++) {
             passengers[i] = new ArrayList<Passenger>();
@@ -169,7 +167,7 @@ public class Building {
     }
 
     public boolean getIsEnd() {
-        return isEnd;
+        return hitCount == total;
     }
 
     public boolean doCommand(Command c) {

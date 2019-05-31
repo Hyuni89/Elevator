@@ -133,6 +133,10 @@ public class Elevator {
         System.out.print("]\t");
     }
 
+    public boolean isEmpty() {
+        return passengers.isEmpty();
+    }
+
     /////////////////////////////// forTest
     public void setFloor(int f) {
         floor = f;
