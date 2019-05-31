@@ -3,7 +3,7 @@ package com.loren.elevator;
 import com.loren.elevator.connection.ActionRequest;
 import com.loren.elevator.connection.ActionResponse;
 import com.loren.elevator.connection.CallResponse;
-import com.loren.elevator.connection.Command;
+import com.loren.elevator.connection.CommandWrap;
 import com.loren.elevator.connection.CommonResponse;
 import com.loren.elevator.connection.StartRequest;
 import com.loren.elevator.model.Building;
@@ -92,8 +92,8 @@ public class ElevatorController {
         }
 
         try {
-            List<Command> req = request.getCommands();
-            for(Command c : req) {
+            List<CommandWrap> req = request.getCommands();
+            for(CommandWrap c : req) {
                 boolean res = building.doCommand(c);
                 if(!res) throw new Exception();
             }

@@ -6,5 +6,5 @@ import lombok.Data;
 
 @Data
 public class ActionRequest {
-    private List<Command> commands;
+    private List<CommandWrap> commands;
 }

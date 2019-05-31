@@ -1,7 +1,7 @@
 package com.loren.elevator.model;
 
 import com.loren.elevator.connection.CallWrap;
-import com.loren.elevator.connection.Command;
+import com.loren.elevator.connection.CommandWrap;
 import com.loren.elevator.connection.ElevatorWrap;
 
 import java.util.ArrayList;
@@ -170,7 +170,7 @@ public class Building {
         return hitCount == total;
     }
 
-    public boolean doCommand(Command c) {
+    public boolean doCommand(CommandWrap c) {
         int elevatorId = c.getElevatorId();
         String command = c.getCommand();
         List<Integer> callIds = c.getCallIds();
