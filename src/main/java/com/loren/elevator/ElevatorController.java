@@ -1,6 +1,8 @@
 package com.loren.elevator;
 
 import com.loren.elevator.connection.ActionRequest;
+import com.loren.elevator.connection.ActionResponse;
+import com.loren.elevator.connection.CallResponse;
 import com.loren.elevator.connection.Command;
 import com.loren.elevator.connection.CommonResponse;
 import com.loren.elevator.connection.StartRequest;
@@ -20,13 +22,11 @@ import static com.loren.elevator.connection.CommonResponse.STATUS_OK;
 @RestController
 public class ElevatorController {
     private boolean doing;
-    private int queryCnt;
     private Building building;
     private CommonResponse ret;
 
     public ElevatorController() {
         doing = false;
-        queryCnt = 0;
         ret = new CommonResponse();
     }
 
@@ -70,11 +70,18 @@ public class ElevatorController {
             ret.setStatus(STATUS_NOTOK);
             return ret;
         }
-        ret = building.call();
 
+        building.call();
         building.showStat();
-        ret.setStatus(STATUS_OK);
-        return ret;
+
+        CallResponse nret = new CallResponse();
+        nret.setElevators(building.getElevatorWrapStatus());
+        nret.setCalls(building.getCallWrapStatus());
+        nret.setTimestamp(building.getTimestamp());
+        nret.setEnd(building.getIsEnd());
+        nret.setStatus(STATUS_OK);
+
+        return nret;
     }
 
     @PostMapping("/action")
@@ -94,9 +101,14 @@ public class ElevatorController {
             ret.setStatus(STATUS_NOTOK);
             return ret;
         }
-
         building.showStat();
-        ret.setStatus(STATUS_OK);
-        return ret;
+
+        ActionResponse nret = new ActionResponse();
+        nret.setElevators(building.getElevatorWrapStatus());
+        nret.setEnd(building.getIsEnd());
+        nret.setTimestamp(building.getTimestamp());
+        nret.setStatus(STATUS_OK);
+
+        return nret;
     }
 }

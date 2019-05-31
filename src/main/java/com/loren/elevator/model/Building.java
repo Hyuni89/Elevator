@@ -1,6 +1,5 @@
 package com.loren.elevator.model;
 
-import com.loren.elevator.connection.CallResponse;
 import com.loren.elevator.connection.CallWrap;
 import com.loren.elevator.connection.Command;
 import com.loren.elevator.connection.ElevatorWrap;
@@ -18,12 +17,14 @@ public class Building {
     private int total;
     private int hitCount;
     private int timestamp;
+    private boolean isEnd;
 
     public Building(int height, int cntElevator, int maxPeople, int total) {
         this.height = height;
         this.total = total;
         timestamp = 0;
         hitCount = 0;
+        isEnd = false;
         passengers = new ArrayList[height];
         for(int i = 0; i < height; i++) {
             passengers[i] = new ArrayList<Passenger>();
@@ -109,7 +110,7 @@ public class Building {
         return true;
     }
 
-    public CallResponse call() {
+    public boolean call() {
         Random r = new Random();
         int cnt = r.nextInt(5) + 1;
         for(int i = 0; i < cnt; i++) {
@@ -121,8 +122,12 @@ public class Building {
             passengers[p.getFloor()].add(p);
         }
 
-        List<CallWrap> callWraps = new ArrayList<>();
+        return true;
+    }
+
+    public List<ElevatorWrap> getElevatorWrapStatus() {
         List<ElevatorWrap> elevatorWraps = new ArrayList<>();
+
         for(int id = 0; id < elevators.size(); id++) {
             ElevatorWrap ew = new ElevatorWrap();
             ew.setId(id);
@@ -131,6 +136,12 @@ public class Building {
             ew.setStatus(elevators.get(id).getStatusString());
             elevatorWraps.add(ew);
         }
+
+        return elevatorWraps;
+    }
+
+    public List<CallWrap> getCallWrapStatus() {
+        List<CallWrap> callWraps = new ArrayList<>();
 
         for(int i = 0; i < height; i++) {
             for(Object p : passengers[i]) {
@@ -150,13 +161,15 @@ public class Building {
             }
         });
 
-        CallResponse ret = new CallResponse();
-        ret.setCalls(callWraps);
-        ret.setElevators(elevatorWraps);
-        ret.setEnd(callWraps.size() == 0);
-        ret.setTimestamp(timestamp++);
+        return callWraps;
+    }
 
-        return ret;
+    public int getTimestamp() {
+        return timestamp++;
+    }
+
+    public boolean getIsEnd() {
+        return isEnd;
     }
 
     public boolean doCommand(Command c) {
@@ -211,7 +224,7 @@ public class Building {
             }
             System.out.println();
         }
-        System.out.print(String.format("htiCount[%d]\n", hitCount));
+        System.out.print(String.format("htiCount[%d], timestamp[%d]\n", hitCount, timestamp));
         System.out.println("=============================");
     }
 }

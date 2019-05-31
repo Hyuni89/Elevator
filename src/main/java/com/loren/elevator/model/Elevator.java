@@ -123,7 +123,7 @@ public class Elevator {
     }
 
     public void showStat(int id) {
-        System.out.print("\t\t[" + id + ":");
+        System.out.print("\t\t[" + id + " " + getStatusString() + " :");
         for(int i = 0; i < passengers.size(); i++) {
             System.out.print(passengers.get(i).getId());
             if(i != passengers.size() - 1) {
