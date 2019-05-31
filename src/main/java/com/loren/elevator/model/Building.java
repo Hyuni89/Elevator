@@ -1,8 +1,13 @@
 package com.loren.elevator.model;
 
+import com.loren.elevator.connection.CallResponse;
+import com.loren.elevator.connection.CallWrap;
 import com.loren.elevator.connection.Command;
+import com.loren.elevator.connection.ElevatorWrap;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -10,9 +15,15 @@ public class Building {
     private int height;
     private ArrayList[] passengers;
     private List<Elevator> elevators;
+    private int total;
+    private int hitCount;
+    private int timestamp;
 
-    public Building(int height, int cntElevator, int maxPeople) {
+    public Building(int height, int cntElevator, int maxPeople, int total) {
         this.height = height;
+        this.total = total;
+        timestamp = 0;
+        hitCount = 0;
         passengers = new ArrayList[height];
         for(int i = 0; i < height; i++) {
             passengers[i] = new ArrayList<Passenger>();
@@ -86,18 +97,66 @@ public class Building {
         if(!elevators.get(index).exit(pass)) {
             return false;
         }
-        passengers[floor].addAll(pass);
+
+        for(Passenger p : pass) {
+            if(p.getTargetFloor() != floor) {
+                passengers[floor].add(p);
+            } else {
+                hitCount++;
+            }
+        }
 
         return true;
     }
 
-    public void call() {
+    public CallResponse call() {
         Random r = new Random();
         int cnt = r.nextInt(5) + 1;
         for(int i = 0; i < cnt; i++) {
-            Passenger p = new Passenger(height);
+            if(total <= Passenger.PASSENGER_ID) {
+                break;
+            }
+
+            Passenger p = new Passenger(height, timestamp);
             passengers[p.getFloor()].add(p);
         }
+
+        List<CallWrap> callWraps = new ArrayList<>();
+        List<ElevatorWrap> elevatorWraps = new ArrayList<>();
+        for(int id = 0; id < elevators.size(); id++) {
+            ElevatorWrap ew = new ElevatorWrap();
+            ew.setId(id);
+            ew.setFloor(elevators.get(id).getFloor());
+            ew.setPassengers(elevators.get(id).getPassengersId());
+            ew.setStatus(elevators.get(id).getStatusString());
+            elevatorWraps.add(ew);
+        }
+
+        for(int i = 0; i < height; i++) {
+            for(Object p : passengers[i]) {
+                CallWrap cw = new CallWrap();
+                Passenger pass = (Passenger)p;
+                cw.setEnd(pass.getTargetFloor());
+                cw.setStart(pass.getSourceFloor());
+                cw.setId(pass.getId());
+                cw.setTimestamp(pass.getTimestamp());
+                callWraps.add(cw);
+            }
+        }
+        Collections.sort(callWraps, new Comparator<CallWrap>() {
+            @Override
+            public int compare(CallWrap o1, CallWrap o2) {
+                return o1.getId() - o2.getId();
+            }
+        });
+
+        CallResponse ret = new CallResponse();
+        ret.setCalls(callWraps);
+        ret.setElevators(elevatorWraps);
+        ret.setEnd(callWraps.size() == 0);
+        ret.setTimestamp(timestamp++);
+
+        return ret;
     }
 
     public boolean doCommand(Command c) {
@@ -152,6 +211,7 @@ public class Building {
             }
             System.out.println();
         }
+        System.out.print(String.format("htiCount[%d]\n", hitCount));
         System.out.println("=============================");
     }
 }

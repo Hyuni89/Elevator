@@ -102,6 +102,26 @@ public class Elevator {
         return null;
     }
 
+    public String getStatusString() {
+        switch(door) {
+            case OPEN: return "OPEN";
+            case UPWARD: return "UPWARD";
+            case DOWNWARD: return "DOWNWARD";
+            case CLOSE: return "CLOSE";
+            case STOP: return "STOP";
+            default: return "ERROR";
+        }
+    }
+
+    public List<Integer> getPassengersId() {
+        List<Integer> ret = new ArrayList<>();
+        for(Passenger p : passengers) {
+            ret.add(p.getId());
+        }
+
+        return ret;
+    }
+
     public void showStat(int id) {
         System.out.print("\t\t[" + id + ":");
         for(int i = 0; i < passengers.size(); i++) {

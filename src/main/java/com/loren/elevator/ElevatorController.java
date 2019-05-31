@@ -20,14 +20,12 @@ import static com.loren.elevator.connection.CommonResponse.STATUS_OK;
 @RestController
 public class ElevatorController {
     private boolean doing;
-    private int timestamp;
     private int queryCnt;
     private Building building;
     private CommonResponse ret;
 
     public ElevatorController() {
         doing = false;
-        timestamp = 0;
         queryCnt = 0;
         ret = new CommonResponse();
     }
@@ -42,12 +40,13 @@ public class ElevatorController {
 
         int elevatorMaxPeople = 8;
         int buildingHeight = 5;
+        int totalCallPeople = -1;
         int elevatorCnt = request.getElevatorCnt();
 
         switch(request.getBuildingHeight()) {
-            case 5: buildingHeight = 5; break;
-            case 10: buildingHeight = 10; break;
-            case 20: buildingHeight = 20; break;
+            case 5: buildingHeight = 5; totalCallPeople = 50; break;
+            case 10: buildingHeight = 10; totalCallPeople = 100; break;
+            case 20: buildingHeight = 20; totalCallPeople = 200; break;
             default: buildingHeight = -1;
         }
 
@@ -58,7 +57,7 @@ public class ElevatorController {
         if(elevatorCnt == -1 || buildingHeight == -1) {
             ret.setStatus(STATUS_NOTOK);
         } else {
-            building = new Building(buildingHeight, elevatorCnt, elevatorMaxPeople);
+            building = new Building(buildingHeight, elevatorCnt, elevatorMaxPeople, totalCallPeople);
             ret.setStatus(STATUS_OK);
         }
 
@@ -71,7 +70,7 @@ public class ElevatorController {
             ret.setStatus(STATUS_NOTOK);
             return ret;
         }
-        building.call();
+        ret = building.call();
 
         building.showStat();
         ret.setStatus(STATUS_OK);

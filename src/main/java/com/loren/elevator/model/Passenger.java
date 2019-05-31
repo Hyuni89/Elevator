@@ -10,11 +10,13 @@ public class Passenger {
     private int sourceFloor;
     private int floor;
     private int id;
+    private int timestamp;
 
     public static int PASSENGER_ID = 0;
 
-    public Passenger(int limit) {
+    public Passenger(int limit, int timestamp) {
         Random r = new Random();
+        this.timestamp = timestamp;
 
         targetFloor = r.nextInt(limit);
         do {
