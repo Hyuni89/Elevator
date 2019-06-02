@@ -8,6 +8,8 @@ import com.loren.elevator.connection.CommonResponse;
 import com.loren.elevator.connection.StartRequest;
 import com.loren.elevator.model.Building;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +23,25 @@ import static com.loren.elevator.connection.CommonResponse.STATUS_OK;
 
 @RestController
 public class ElevatorController {
+
     private boolean doing;
+
+    @Autowired
     private Building building;
+
+    @Qualifier("commonResponse")
+    @Autowired
     private CommonResponse ret;
+
+    @Qualifier("actionResponse")
+    @Autowired
+    private ActionResponse aret;
+
+    @Autowired
+    private CallResponse cret;
 
     public ElevatorController() {
         doing = false;
-        ret = new CommonResponse();
     }
 
     @PostMapping("/start")
@@ -57,7 +71,7 @@ public class ElevatorController {
         if(elevatorCnt == -1 || buildingHeight == -1) {
             ret.setStatus(STATUS_NOTOK);
         } else {
-            building = new Building(buildingHeight, elevatorCnt, elevatorMaxPeople, totalCallPeople);
+            building.init(buildingHeight, elevatorCnt, elevatorMaxPeople, totalCallPeople);
             ret.setStatus(STATUS_OK);
         }
 
@@ -74,14 +88,13 @@ public class ElevatorController {
         building.call();
         building.showStat();
 
-        CallResponse nret = new CallResponse();
-        nret.setElevators(building.getElevatorWrapStatus());
-        nret.setCalls(building.getCallWrapStatus());
-        nret.setTimestamp(building.getTimestamp());
-        nret.setEnd(building.getIsEnd());
-        nret.setStatus(STATUS_OK);
+        cret.setElevators(building.getElevatorWrapStatus());
+        cret.setCalls(building.getCallWrapStatus());
+        cret.setTimestamp(building.getTimestamp());
+        cret.setEnd(building.getIsEnd());
+        cret.setStatus(STATUS_OK);
 
-        return nret;
+        return cret;
     }
 
     @PostMapping("/action")
@@ -103,12 +116,11 @@ public class ElevatorController {
         }
         building.showStat();
 
-        ActionResponse nret = new ActionResponse();
-        nret.setElevators(building.getElevatorWrapStatus());
-        nret.setEnd(building.getIsEnd());
-        nret.setTimestamp(building.getTimestamp());
-        nret.setStatus(STATUS_OK);
+        aret.setElevators(building.getElevatorWrapStatus());
+        aret.setEnd(building.getIsEnd());
+        aret.setTimestamp(building.getTimestamp());
+        aret.setStatus(STATUS_OK);
 
-        return nret;
+        return aret;
     }
 }

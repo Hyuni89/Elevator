@@ -1,7 +1,10 @@
 package com.loren.elevator.connection;
 
+import org.springframework.stereotype.Component;
+
 import lombok.Data;
 
+@Component
 @Data
 public class CommonResponse {
     private int status;
