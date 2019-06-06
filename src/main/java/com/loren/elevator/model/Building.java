@@ -206,7 +206,7 @@ public class Building {
 
     public void showStat() {
         System.out.println("=============================");
-        for(int i = 1; i <= height; i++) {
+        for(int i = height; i >= 1; i--) {
             System.out.print(i + "[");
             for(int j = 0; j < passengers[i - 1].size(); j++) {
                 System.out.print(((Passenger)passengers[i - 1].get(j)).getId());
