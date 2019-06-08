@@ -4,12 +4,15 @@ import com.loren.elevator.connection.CallWrap;
 import com.loren.elevator.connection.CommandWrap;
 import com.loren.elevator.connection.ElevatorWrap;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+@Component
 public class Building {
     private int height;
     private ArrayList[] passengers;
@@ -18,7 +21,7 @@ public class Building {
     private int hitCount;
     private int timestamp;
 
-    public Building(int height, int cntElevator, int maxPeople, int total) {
+    public void init(int height, int cntElevator, int maxPeople, int total) {
         this.height = height;
         this.total = total;
         timestamp = 0;

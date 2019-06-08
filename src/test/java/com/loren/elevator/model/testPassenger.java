@@ -4,7 +4,7 @@ import org.junit.Assert;
 
 public class testPassenger {
     public static void main(String[] args) {
-        Passenger p = new Passenger(10);
+        Passenger p = new Passenger(10, 0);
         int source = p.getSourceFloor();
         int target = p.getTargetFloor();
         int floor = p.getFloor();
