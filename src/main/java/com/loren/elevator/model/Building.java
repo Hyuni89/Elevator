@@ -26,6 +26,7 @@ public class Building {
         this.total = total;
         timestamp = 0;
         hitCount = 0;
+        Passenger.PASSENGER_ID = 0;
         passengers = new ArrayList[height];
         for(int i = 0; i < height; i++) {
             passengers[i] = new ArrayList<Passenger>();

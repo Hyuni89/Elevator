@@ -118,6 +118,11 @@ public class ElevatorController {
         actionResponse.setTimestamp(building.getTimestamp());
         actionResponse.setStatus(STATUS_OK);
 
+        if(building.getIsEnd()) {
+            System.out.println("===== Congratulation! You've Done It! =====");
+            doing = false;
+        }
+
         return actionResponse;
     }
 }

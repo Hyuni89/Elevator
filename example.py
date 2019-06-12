@@ -55,9 +55,13 @@ def main():
             if len(getOut) != 0:
                 res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'OPEN'}]})
                 print('action open', res)
+                if res['end']:
+                    break
 
                 res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'EXIT', 'callIds': [x[0] for x in getOut]}]})
                 print('action exit', res)
+                if res['end']:
+                    break
 
                 opened = True
 
@@ -70,11 +74,15 @@ def main():
                 if opened is False:
                     res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'OPEN'}]})
                     print('action open', res)
-                
+                    if res['end']:
+                        break
+
                 if len(passenger) + len(getIn) > 8:
                     getIn = getIn[:8 - len(passenger)]
                 res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'ENTER', 'callIds': [x[0] for x in getIn]}]})
                 print('action enter', res)
+                if res['end']:
+                    break
 
                 passenger += getIn
                 opened = True
@@ -82,10 +90,14 @@ def main():
             if opened is True:
                 res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'CLOSE'}]})
                 print('action close', res)
+                if res['end']:
+                    break
 
             if up is True:
                 res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'UP'}]})
                 print('action up', res)
+                if res['end']:
+                    break
                 floor += 1
 
                 if floor == height - 1:
@@ -94,6 +106,8 @@ def main():
             else:
                 res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'DOWN'}]})
                 print('action down', res)
+                if res['end']:
+                    break
                 floor -= 1
 
                 if floor == 0:
@@ -101,6 +115,8 @@ def main():
 
             res = action(baseUrl, {'commands': [{'elevatorId': 0, 'command': 'STOP'}]})
             print('action stop', res)
+            if res['end']:
+                break
 
     except Exception as e:
         print(e)
