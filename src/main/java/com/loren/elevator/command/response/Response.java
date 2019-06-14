@@ -1,4 +1,4 @@
-package com.loren.elevator.connection;
+package com.loren.elevator.command.response;
 
 import org.springframework.stereotype.Component;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Component
 @Data
-public class CommonResponse {
+public class Response {
     private int status;
 
     public static int STATUS_OK = 200;

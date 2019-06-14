@@ -1,4 +1,6 @@
-package com.loren.elevator.connection;
+package com.loren.elevator.command.response;
+
+import com.loren.elevator.command.wrapper.CallWrap;
 
 import org.springframework.stereotype.Component;
 

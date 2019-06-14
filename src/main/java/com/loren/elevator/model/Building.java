@@ -1,8 +1,8 @@
 package com.loren.elevator.model;
 
-import com.loren.elevator.connection.CallWrap;
-import com.loren.elevator.connection.CommandWrap;
-import com.loren.elevator.connection.ElevatorWrap;
+import com.loren.elevator.command.wrapper.CallWrap;
+import com.loren.elevator.command.wrapper.CommandWrap;
+import com.loren.elevator.command.wrapper.ElevatorWrap;
 
 import org.springframework.stereotype.Component;
 
@@ -27,6 +27,7 @@ public class Building {
         timestamp = 0;
         hitCount = 0;
         Passenger.PASSENGER_ID = 0;
+
         passengers = new ArrayList[height];
         for(int i = 0; i < height; i++) {
             passengers[i] = new ArrayList<Passenger>();

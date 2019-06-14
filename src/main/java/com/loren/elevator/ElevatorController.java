@@ -1,11 +1,11 @@
 package com.loren.elevator;
 
-import com.loren.elevator.connection.ActionRequest;
-import com.loren.elevator.connection.ActionResponse;
-import com.loren.elevator.connection.CallResponse;
-import com.loren.elevator.connection.CommandWrap;
-import com.loren.elevator.connection.CommonResponse;
-import com.loren.elevator.connection.StartRequest;
+import com.loren.elevator.command.ACTION;
+import com.loren.elevator.command.CALL;
+import com.loren.elevator.command.START;
+import com.loren.elevator.command.request.ActionRequest;
+import com.loren.elevator.command.request.StartRequest;
+import com.loren.elevator.command.response.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,91 +14,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-import static com.loren.elevator.connection.CommonResponse.STATUS_NOTOK;
-import static com.loren.elevator.connection.CommonResponse.STATUS_OK;
-
 @RestController
 public class ElevatorController {
-
-    private boolean doing;
+    @Autowired
+    private START start;
 
     @Autowired
-    private CommonResponse commonResponse;
+    private CALL call;
 
     @Autowired
-    private ActionResponse actionResponse;
-
-    @Autowired
-    private CallResponse callResponse;
-
-    @Autowired
-    private ElevatorService elevatorService;
-
-    public ElevatorController() {
-        doing = false;
-    }
+    private ACTION action;
 
     @PostMapping("/start")
-    public @ResponseBody CommonResponse start(@RequestBody StartRequest request) {
-        if(doing) {
-            commonResponse.setStatus(STATUS_NOTOK);
-            return commonResponse;
-        }
-        doing = true;
-
-        int buildingHeight = request.getBuildingHeight();
-        int elevatorCnt = request.getElevatorCnt();
-
-        commonResponse.setStatus(elevatorService.start(buildingHeight, elevatorCnt) ? STATUS_OK : STATUS_NOTOK);
-
-        return commonResponse;
+    public @ResponseBody Response start(@RequestBody StartRequest request) {
+        return start.invoke(request);
     }
 
     @GetMapping("/call")
-    public @ResponseBody CommonResponse call() {
-        if(!doing) {
-            commonResponse.setStatus(STATUS_NOTOK);
-            return commonResponse;
-        }
-
-        elevatorService.call();
-
-        callResponse.setElevators(elevatorService.getElevatorWrapStatus());
-        callResponse.setCalls(elevatorService.getCallWrapStatus());
-        callResponse.setTimestamp(elevatorService.getTimestamp());
-        callResponse.setEnd(elevatorService.getIsEnd());
-        callResponse.setStatus(STATUS_OK);
-
-        return callResponse;
+    public @ResponseBody Response call() {
+        return call.invoke(null);
     }
 
     @PostMapping("/action")
-    public @ResponseBody CommonResponse action(@RequestBody ActionRequest request) {
-        if(!doing) {
-            commonResponse.setStatus(STATUS_NOTOK);
-            return commonResponse;
-        }
-
-        List<CommandWrap> req = request.getCommands();
-        try {
-            elevatorService.action(req);
-        } catch(Exception e) {
-            commonResponse.setStatus(STATUS_NOTOK);
-            return commonResponse;
-        }
-
-        actionResponse.setElevators(elevatorService.getElevatorWrapStatus());
-        actionResponse.setEnd(elevatorService.getIsEnd());
-        actionResponse.setTimestamp(elevatorService.getTimestamp());
-        actionResponse.setStatus(STATUS_OK);
-
-        if(elevatorService.getIsEnd()) {
-            System.out.println("===== Congratulation! You've Done It! =====");
-            doing = false;
-        }
-
-        return actionResponse;
+    public @ResponseBody Response action(@RequestBody ActionRequest request) {
+        return action.invoke(request);
     }
 }

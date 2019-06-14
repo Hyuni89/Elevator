@@ -1,4 +1,4 @@
-package com.loren.elevator.connection;
+package com.loren.elevator.command.wrapper;
 
 import java.util.List;
 

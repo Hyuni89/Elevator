@@ -1,8 +1,8 @@
 package com.loren.elevator;
 
-import com.loren.elevator.connection.CallWrap;
-import com.loren.elevator.connection.CommandWrap;
-import com.loren.elevator.connection.ElevatorWrap;
+import com.loren.elevator.command.wrapper.CallWrap;
+import com.loren.elevator.command.wrapper.CommandWrap;
+import com.loren.elevator.command.wrapper.ElevatorWrap;
 import com.loren.elevator.model.Building;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,12 @@ import java.util.List;
 public class ElevatorService {
     @Autowired
     private Building building;
+
+    private boolean running;
+
+    public ElevatorService() {
+        running = false;
+    }
 
     public boolean start(int height, int cnt) {
         int totalCallPeople = -1;
@@ -29,6 +35,8 @@ public class ElevatorService {
         if(cnt <= 0 || cnt > 4) return false;
 
         building.init(height, cnt, elevatorMaxPeople, totalCallPeople);
+        running = true;
+
         return true;
     }
 
@@ -46,7 +54,16 @@ public class ElevatorService {
     }
 
     public boolean getIsEnd() {
-        return building.getIsEnd();
+        boolean ret = building.getIsEnd();
+        if(ret) {
+            running = false;
+            System.out.println("===== Congratulation! You've Done It! =====");
+        }
+        return ret;
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 
     public int getTimestamp() {
