@@ -94,7 +94,7 @@ public class ElevatorController {
         actionResponse.setTimestamp(elevatorService.getTimestamp());
         actionResponse.setStatus(STATUS_OK);
 
-        if(building.getIsEnd()) {
+        if(elevatorService.getIsEnd()) {
             System.out.println("===== Congratulation! You've Done It! =====");
             doing = false;
         }
