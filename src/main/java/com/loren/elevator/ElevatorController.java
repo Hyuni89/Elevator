@@ -6,7 +6,6 @@ import com.loren.elevator.connection.CallResponse;
 import com.loren.elevator.connection.CommandWrap;
 import com.loren.elevator.connection.CommonResponse;
 import com.loren.elevator.connection.StartRequest;
-import com.loren.elevator.model.Building;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +25,6 @@ public class ElevatorController {
     private boolean doing;
 
     @Autowired
-    private Building building;
-
-    @Autowired
     private CommonResponse commonResponse;
 
     @Autowired
@@ -36,6 +32,9 @@ public class ElevatorController {
 
     @Autowired
     private CallResponse callResponse;
+
+    @Autowired
+    private ElevatorService elevatorService;
 
     public ElevatorController() {
         doing = false;
@@ -49,28 +48,10 @@ public class ElevatorController {
         }
         doing = true;
 
-        int elevatorMaxPeople = 8;
-        int buildingHeight = 5;
-        int totalCallPeople = -1;
+        int buildingHeight = request.getBuildingHeight();
         int elevatorCnt = request.getElevatorCnt();
 
-        switch(request.getBuildingHeight()) {
-            case 5: buildingHeight = 5; totalCallPeople = 50; break;
-            case 10: buildingHeight = 10; totalCallPeople = 100; break;
-            case 20: buildingHeight = 20; totalCallPeople = 200; break;
-            default: buildingHeight = -1;
-        }
-
-        if(elevatorCnt <= 0 || elevatorCnt > 5) {
-            elevatorCnt = -1;
-        }
-
-        if(elevatorCnt == -1 || buildingHeight == -1) {
-            commonResponse.setStatus(STATUS_NOTOK);
-        } else {
-            building.init(buildingHeight, elevatorCnt, elevatorMaxPeople, totalCallPeople);
-            commonResponse.setStatus(STATUS_OK);
-        }
+        commonResponse.setStatus(elevatorService.start(buildingHeight, elevatorCnt) ? STATUS_OK : STATUS_NOTOK);
 
         return commonResponse;
     }
@@ -82,13 +63,12 @@ public class ElevatorController {
             return commonResponse;
         }
 
-        building.call();
-        building.showStat();
+        elevatorService.call();
 
-        callResponse.setElevators(building.getElevatorWrapStatus());
-        callResponse.setCalls(building.getCallWrapStatus());
-        callResponse.setTimestamp(building.getTimestamp());
-        callResponse.setEnd(building.getIsEnd());
+        callResponse.setElevators(elevatorService.getElevatorWrapStatus());
+        callResponse.setCalls(elevatorService.getCallWrapStatus());
+        callResponse.setTimestamp(elevatorService.getTimestamp());
+        callResponse.setEnd(elevatorService.getIsEnd());
         callResponse.setStatus(STATUS_OK);
 
         return callResponse;
@@ -101,21 +81,17 @@ public class ElevatorController {
             return commonResponse;
         }
 
+        List<CommandWrap> req = request.getCommands();
         try {
-            List<CommandWrap> req = request.getCommands();
-            for(CommandWrap c : req) {
-                boolean res = building.doCommand(c);
-                if(!res) throw new Exception();
-            }
+            elevatorService.action(req);
         } catch(Exception e) {
             commonResponse.setStatus(STATUS_NOTOK);
             return commonResponse;
         }
-        building.showStat();
 
-        actionResponse.setElevators(building.getElevatorWrapStatus());
-        actionResponse.setEnd(building.getIsEnd());
-        actionResponse.setTimestamp(building.getTimestamp());
+        actionResponse.setElevators(elevatorService.getElevatorWrapStatus());
+        actionResponse.setEnd(elevatorService.getIsEnd());
+        actionResponse.setTimestamp(elevatorService.getTimestamp());
         actionResponse.setStatus(STATUS_OK);
 
         if(building.getIsEnd()) {
