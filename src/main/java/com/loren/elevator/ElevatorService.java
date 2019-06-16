@@ -46,9 +46,10 @@ public class ElevatorService {
     }
 
     public void action(List<CommandWrap> req) throws Exception {
-        for(CommandWrap c : req) {
-            boolean res = building.doCommand(c);
-            if(!res) throw new Exception();
+        boolean res = building.doCommand(req);
+        if(!res) {
+            building.doRollback();
+            throw new Exception();
         }
         building.showStat();
     }

@@ -12,7 +12,7 @@ public class testElevator {
     public static void main(String[] args) {
         int max = 20;
         int p = 12;
-        Elevator e = new Elevator(max, p);
+        Elevator e = new Elevator(0, max, p);
         Passenger[] pass = new Passenger[p];
 
         testOPEN(e);

@@ -3,7 +3,11 @@ package com.loren.elevator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class Elevator {
+    private int id;
     private int floor;
     private List<Passenger> passengers;
     private status door;
@@ -17,12 +21,26 @@ public class Elevator {
         DOWNWARD
     }
 
-    public Elevator(int maxFloor, int maxPeople) {
+    public Elevator(int id, int maxFloor, int maxPeople) {
+        this.id = id;
         floor = 0;
         door = status.CLOSE;
         passengers = new ArrayList<>();
         this.maxPeople = maxPeople;
         this.maxFloor = maxFloor;
+    }
+
+    public Elevator(Elevator e) {
+        rollback(e);
+    }
+
+    public void rollback(Elevator e) {
+        id = e.getId();
+        floor = e.getFloor();
+        passengers = new ArrayList<>(e.getPassengers());
+        door = e.getDoor();
+        maxPeople = e.getMaxPeople();
+        maxFloor = e.getMaxFloor();
     }
 
     public boolean enter(List<Passenger> passenger) {
@@ -88,10 +106,6 @@ public class Elevator {
         return true;
     }
 
-    public int getFloor() {
-        return floor;
-    }
-
     public Passenger hasPassenger(int id) {
         for(Passenger p : passengers) {
             if(p.getId() == id) {
@@ -138,10 +152,6 @@ public class Elevator {
     }
 
     /////////////////////////////// forTest
-    public void setFloor(int f) {
-        floor = f;
-    }
-
     public int getPassengerSize() {
         return passengers.size();
     }

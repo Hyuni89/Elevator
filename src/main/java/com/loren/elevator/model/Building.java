@@ -9,16 +9,20 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Component
 public class Building {
     private int height;
     private ArrayList[] passengers;
     private List<Elevator> elevators;
+    private List<Elevator> rollback;
     private int total;
     private int hitCount;
+    private int lastHitCount;
     private int timestamp;
 
     public void init(int height, int cntElevator, int maxPeople, int total) {
@@ -26,6 +30,7 @@ public class Building {
         this.total = total;
         timestamp = 0;
         hitCount = 0;
+        lastHitCount = 0;
         Passenger.PASSENGER_ID = 0;
 
         passengers = new ArrayList[height];
@@ -34,8 +39,9 @@ public class Building {
         }
         elevators = new ArrayList<>();
         for(int i = 0; i < cntElevator; i++) {
-            elevators.add(new Elevator(height, maxPeople));
+            elevators.add(new Elevator(i, height, maxPeople));
         }
+        rollback = new ArrayList<>();
     }
 
     public boolean open(int index) {
@@ -175,38 +181,69 @@ public class Building {
         return hitCount == total;
     }
 
-    public boolean doCommand(CommandWrap c) {
-        int elevatorId = c.getElevatorId();
-        String command = c.getCommand();
-        List<Integer> callIds = c.getCallIds();
+    public boolean doCommand(List<CommandWrap> req) {
+        rollback.clear();
+        lastHitCount = hitCount;
         boolean ret = true;
+        for(CommandWrap c : req) {
+            int elevatorId = c.getElevatorId();
+            String command = c.getCommand();
+            List<Integer> callIds = c.getCallIds();
 
-        switch(command) {
-            case "OPEN":
-                ret = open(elevatorId);
-                break;
-            case "CLOSE":
-                ret = close(elevatorId);
-                break;
-            case "UP":
-                ret = up(elevatorId);
-                break;
-            case "DOWN":
-                ret = down(elevatorId);
-                break;
-            case "STOP":
-                ret = stop(elevatorId);
-                break;
-            case "ENTER":
-                ret = enter(elevatorId, callIds);
-                break;
-            case "EXIT":
-                ret = exit(elevatorId, callIds);
-                break;
-            default:
+            Elevator backup = new Elevator(elevators.get(elevatorId));
+
+            switch(command) {
+                case "OPEN":
+                    ret = open(elevatorId);
+                    break;
+                case "CLOSE":
+                    ret = close(elevatorId);
+                    break;
+                case "UP":
+                    ret = up(elevatorId);
+                    break;
+                case "DOWN":
+                    ret = down(elevatorId);
+                    break;
+                case "STOP":
+                    ret = stop(elevatorId);
+                    break;
+                case "ENTER":
+                    ret = enter(elevatorId, callIds);
+                    break;
+                case "EXIT":
+                    ret = exit(elevatorId, callIds);
+                    break;
+                default:
+            }
+
+            if(!ret) break;
+            rollback.add(backup);
         }
 
         return ret;
+    }
+
+    public void doRollback() {
+        for(Elevator e : rollback) {
+            int id = e.getId();
+            if(e.getPassengerSize() != elevators.get(id).getPassengerSize()) {
+                Set<Passenger> before = new HashSet<>(e.getPassengers());
+                Set<Passenger> after = new HashSet<>(elevators.get(id).getPassengers());
+
+                if(e.getPassengerSize() > elevators.get(id).getPassengerSize()) {
+                    before.removeAll(after);
+                    passengers[e.getFloor()].removeAll(before);
+                } else {
+                    after.removeAll(before);
+                    passengers[e.getFloor()].addAll(after);
+                }
+            }
+
+            elevators.get(id).rollback(e);
+        }
+
+        hitCount = lastHitCount;
     }
 
     public void showStat() {
@@ -227,7 +264,7 @@ public class Building {
             }
             System.out.println();
         }
-        System.out.print(String.format("htiCount[%d], timestamp[%d]\n", hitCount, timestamp));
+        System.out.print(String.format("hitCount[%d], timestamp[%d]\n", hitCount, timestamp));
         System.out.println("=============================");
     }
 }
