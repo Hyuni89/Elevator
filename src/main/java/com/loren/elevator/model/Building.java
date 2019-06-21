@@ -44,6 +44,22 @@ public class Building {
         rollback = new ArrayList<>();
     }
 
+    public int getHeight() {
+        return height;
+    }
+
+    public int getElevatorCnt() {
+        return elevators != null ? elevators.size() : 0;
+    }
+
+    public int getHitCount() {
+        return hitCount;
+    }
+
+    public ArrayList[] getPassengers() {
+        return passengers;
+    }
+
     public boolean open(int index) {
         return elevators.get(index).open();
     }
@@ -135,6 +151,8 @@ public class Building {
     }
 
     public List<ElevatorWrap> getElevatorWrapStatus() {
+        if(elevators == null) return null;
+
         List<ElevatorWrap> elevatorWraps = new ArrayList<>();
 
         for(int id = 0; id < elevators.size(); id++) {
@@ -150,6 +168,8 @@ public class Building {
     }
 
     public List<CallWrap> getCallWrapStatus() {
+        if(passengers == null) return null;
+
         List<CallWrap> callWraps = new ArrayList<>();
 
         for(int i = 0; i < height; i++) {

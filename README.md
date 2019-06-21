@@ -126,3 +126,7 @@ POST `http://localhost:8080/action`
   ]
 }
 ```
+
+### Visualize
+1. Open your browser
+2. Enter the page `http://localhost:8080/stat`

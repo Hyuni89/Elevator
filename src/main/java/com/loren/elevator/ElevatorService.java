@@ -4,10 +4,12 @@ import com.loren.elevator.command.wrapper.CallWrap;
 import com.loren.elevator.command.wrapper.CommandWrap;
 import com.loren.elevator.command.wrapper.ElevatorWrap;
 import com.loren.elevator.model.Building;
+import com.loren.elevator.model.Elevator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,5 +79,21 @@ public class ElevatorService {
 
     public List<CallWrap> getCallWrapStatus() {
         return building.getCallWrapStatus();
+    }
+
+    public int getHeight() {
+        return building.getHeight();
+    }
+
+    public int getElevatorCnt() {
+        return building.getElevatorCnt();
+    }
+
+    public int getHitCount() {
+        return building.getHitCount();
+    }
+
+    public ArrayList[] getPassengers() {
+        return building.getPassengers();
     }
 }

@@ -1,0 +1,14 @@
+@charset "utf-8";
+
+table {
+    text-align: center;
+    width: 100%;
+}
+
+.even {
+    background-color: whitesmoke;
+}
+
+.elevator {
+    background-color: lightyellow;
+}
