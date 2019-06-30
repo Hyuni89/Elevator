@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @RestController
 public class ElevatorController {
@@ -25,18 +26,27 @@ public class ElevatorController {
     @Autowired
     private ACTION action;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     @PostMapping("/start")
     public @ResponseBody Response start(@RequestBody StartRequest request) {
-        return start.invoke(request);
+        Response ret = start.invoke(request);
+        simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        return ret;
     }
 
     @GetMapping("/call")
     public @ResponseBody Response call() {
-        return call.invoke(null);
+        Response ret = call.invoke(null);
+        simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        return ret;
     }
 
     @PostMapping("/action")
     public @ResponseBody Response action(@RequestBody ActionRequest request) {
-        return action.invoke(request);
+        Response ret = action.invoke(request);
+        simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        return ret;
     }
 }
