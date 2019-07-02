@@ -126,6 +126,7 @@ public class Building {
 
         for(Passenger p : pass) {
             if(p.getTargetFloor() != floor) {
+                p.setSourceFloor(floor);
                 passengers[floor].add(p);
             } else {
                 hitCount++;
