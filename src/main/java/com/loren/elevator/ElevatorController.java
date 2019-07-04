@@ -32,21 +32,21 @@ public class ElevatorController {
     @PostMapping("/start")
     public @ResponseBody Response start(@RequestBody StartRequest request) {
         Response ret = start.invoke(request);
-        simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        if(ret.getStatus() == Response.STATUS_OK) simpMessagingTemplate.convertAndSend("/subscribe", request);
         return ret;
     }
 
     @GetMapping("/call")
     public @ResponseBody Response call() {
         Response ret = call.invoke(null);
-        simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        if(ret.getStatus() == Response.STATUS_OK) simpMessagingTemplate.convertAndSend("/subscribe", ret);
         return ret;
     }
 
     @PostMapping("/action")
     public @ResponseBody Response action(@RequestBody ActionRequest request) {
         Response ret = action.invoke(request);
-        simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        if(ret.getStatus() == Response.STATUS_OK) simpMessagingTemplate.convertAndSend("/subscribe", action.getStat());
         return ret;
     }
 }
