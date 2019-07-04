@@ -3,6 +3,7 @@ package com.loren.elevator.command;
 import com.loren.elevator.ElevatorService;
 import com.loren.elevator.command.request.ActionRequest;
 import com.loren.elevator.command.response.ActionResponse;
+import com.loren.elevator.command.response.CallResponse;
 import com.loren.elevator.command.response.Response;
 import com.loren.elevator.command.wrapper.CommandWrap;
 
@@ -24,6 +25,9 @@ public class ACTION implements Command<ActionRequest, Response> {
 
     @Autowired
     private ActionResponse actionResponse;
+
+    @Autowired
+    private CallResponse callResponse;
 
     @Override
     public Response invoke(ActionRequest request) {
@@ -50,5 +54,15 @@ public class ACTION implements Command<ActionRequest, Response> {
         actionResponse.setEnd(elevatorService.getIsEnd());
         actionResponse.setTimestamp(elevatorService.getTimestamp());
         actionResponse.setStatus(STATUS_OK);
+    }
+
+    public Response getStat() {
+        callResponse.setElevators(elevatorService.getElevatorWrapStatus());
+        callResponse.setCalls(elevatorService.getCallWrapStatus());
+        callResponse.setTimestamp(elevatorService.getTimestamp());
+        callResponse.setEnd(elevatorService.getIsEnd());
+        callResponse.setStatus(STATUS_OK);
+
+        return callResponse;
     }
 }

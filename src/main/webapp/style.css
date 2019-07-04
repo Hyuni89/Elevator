@@ -2,13 +2,17 @@
 
 table {
     text-align: center;
-    width: 100%;
 }
 
-.even {
+tr {
+    height: 20px;
+}
+
+td {
+    width: 100px;
     background-color: whitesmoke;
 }
 
 .elevator {
-    background-color: lightyellow;
+    background-color: lightgreen;
 }

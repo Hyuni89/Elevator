@@ -17,7 +17,7 @@ public class ElevatorStatController {
 
         mv.addObject("height", elevatorService.getHeight());
         mv.addObject("cnt", elevatorService.getElevatorCnt());
-        mv.addObject("hit", elevatorService.getHitCount());
+        mv.addObject("run", elevatorService.isRunning());
         mv.addObject("call", elevatorService.getPassengers());
         mv.addObject("elevator", elevatorService.getElevatorWrapStatus());
 
