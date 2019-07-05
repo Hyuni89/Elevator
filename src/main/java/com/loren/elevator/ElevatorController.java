@@ -39,7 +39,7 @@ public class ElevatorController {
     @GetMapping("/call")
     public @ResponseBody Response call() {
         Response ret = call.invoke(null);
-        if(ret.getStatus() == Response.STATUS_OK) simpMessagingTemplate.convertAndSend("/subscribe", ret);
+        if(ret.getStatus() == Response.STATUS_OK) simpMessagingTemplate.convertAndSend("/subscribe", call.getStat());
         return ret;
     }
 

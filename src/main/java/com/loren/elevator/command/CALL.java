@@ -4,6 +4,7 @@ import com.loren.elevator.ElevatorService;
 import com.loren.elevator.command.request.Request;
 import com.loren.elevator.command.response.CallResponse;
 import com.loren.elevator.command.response.Response;
+import com.loren.elevator.command.response.StatResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class CALL implements Command<Request, Response> {
 
     @Autowired
     private CallResponse callResponse;
+
+    @Autowired
+    private StatResponse statResponse;
 
     @Override
     public Response invoke(Request request) {
@@ -41,5 +45,12 @@ public class CALL implements Command<Request, Response> {
         callResponse.setTimestamp(elevatorService.getTimestamp());
         callResponse.setEnd(elevatorService.getIsEnd());
         callResponse.setStatus(STATUS_OK);
+    }
+
+    public Response getStat() {
+        statResponse.setCalls(elevatorService.getCallWrapStatus());
+        statResponse.setElevators(elevatorService.getElevatorWrapStatus());
+
+        return statResponse;
     }
 }

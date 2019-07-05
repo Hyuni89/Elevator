@@ -5,6 +5,7 @@ import com.loren.elevator.command.request.ActionRequest;
 import com.loren.elevator.command.response.ActionResponse;
 import com.loren.elevator.command.response.CallResponse;
 import com.loren.elevator.command.response.Response;
+import com.loren.elevator.command.response.StatResponse;
 import com.loren.elevator.command.wrapper.CommandWrap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ACTION implements Command<ActionRequest, Response> {
     private ActionResponse actionResponse;
 
     @Autowired
-    private CallResponse callResponse;
+    private StatResponse statResponse;
 
     @Override
     public Response invoke(ActionRequest request) {
@@ -57,12 +58,9 @@ public class ACTION implements Command<ActionRequest, Response> {
     }
 
     public Response getStat() {
-        callResponse.setElevators(elevatorService.getElevatorWrapStatus());
-        callResponse.setCalls(elevatorService.getCallWrapStatus());
-        callResponse.setTimestamp(elevatorService.getTimestamp());
-        callResponse.setEnd(elevatorService.getIsEnd());
-        callResponse.setStatus(STATUS_OK);
+        statResponse.setElevators(elevatorService.getElevatorWrapStatus());
+        statResponse.setCalls(elevatorService.getCallWrapStatus());
 
-        return callResponse;
+        return statResponse;
     }
 }
